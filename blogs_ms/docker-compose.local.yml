@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+
+  bloggers:
+    build:
+      context: ./bloggers
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    depends_on:
+      - bloggers_db
+
+  bloggers_db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: bloggers_user
+      POSTGRES_PASSWORD: bloggers_password
+      POSTGRES_DB: bloggers_db
+    volumes:
+      - .volumes/bloggers_db:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+
+
+  blogs:
+    build:
+      context: ./blogs
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8001:8000"
+    depends_on:
+      - blogs_db
+
+  blogs_db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: blogs_user
+      POSTGRES_PASSWORD: blogs_password
+      POSTGRES_DB: blogs_db
+    volumes:
+      - .volumes/blogs_db:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
